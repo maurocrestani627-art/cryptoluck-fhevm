@@ -1,0 +1,26 @@
+{
+  "name": "cryptoluck-fhevm",
+  "version": "1.0.0",
+  "description": "A provably fair lottery platform powered by FHEVM",
+  "private": true,
+  "workspaces": [
+    "packages/*"
+  ],
+  "scripts": {
+    "dev": "cd packages/nextjs && pnpm dev",
+    "build": "cd packages/nextjs && pnpm build",
+    "hardhat:compile": "cd packages/hardhat && pnpm compile",
+    "hardhat:test": "cd packages/hardhat && pnpm test",
+    "hardhat:deploy": "cd packages/hardhat && pnpm deploy"
+  },
+  "keywords": [
+    "fhevm",
+    "fhe",
+    "lottery",
+    "blockchain",
+    "privacy"
+  ],
+  "author": "",
+  "license": "MIT"
+}
+
