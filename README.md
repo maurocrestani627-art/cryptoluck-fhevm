@@ -247,3 +247,4 @@ This is a demonstration project for the Zama FHEVM Developer Program. Contributi
 
 *Making lottery games fair, one encrypted number at a time.*
 
+

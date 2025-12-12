@@ -33,7 +33,6 @@ export default function PlayPage() {
   const [isSubmitting, setIsSubmitting] = useState(false);
   const [isDecrypting, setIsDecrypting] = useState(false);
   const [result, setResult] = useState<number | null>(null);
-  const [countdown, setCountdown] = useState(0);
   const [canDecrypt, setCanDecrypt] = useState(false);
   const [error, setError] = useState<string | null>(null);
   
@@ -126,18 +125,8 @@ export default function PlayPage() {
       await tx.wait();
       console.log('✅ Transaction confirmed!');
 
-      // 3. Start countdown for permission synchronization
-      setCountdown(10);
-      const timer = setInterval(() => {
-        setCountdown((prev) => {
-          if (prev <= 1) {
-            clearInterval(timer);
-            setCanDecrypt(true);
-            return 0;
-          }
-          return prev - 1;
-        });
-      }, 1000);
+      // Enable decryption after successful submission
+      setCanDecrypt(true);
 
     } catch (e: any) {
       setError(e.message || 'Failed to submit guess');
@@ -148,7 +137,7 @@ export default function PlayPage() {
   };
 
   // Handle result decryption
-  const handleDecryptResult = async (retryCount = 0) => {
+  const handleDecryptResult = async () => {
     if (!fhevmInstance || !walletClient || !address) return;
 
     setIsDecrypting(true);
@@ -197,7 +186,6 @@ export default function PlayPage() {
       
       // 6. Call userDecrypt to decrypt the result
       console.log('🔓 Decrypting result...');
-      console.log('⏳ This may take 30-60 seconds...');
       
       const decryptedResults = await fhevmInstance.userDecrypt(
         handleContractPairs,
@@ -216,15 +204,6 @@ export default function PlayPage() {
       setCanDecrypt(false);
       
     } catch (e: any) {
-      // Auto retry on 500 error (permission not synced yet)
-      if (e.message?.includes('500') && retryCount < 3) {
-        const waitTime = (retryCount + 1) * 10;
-        console.log(`⚠️ Retry ${retryCount + 1}/3 after ${waitTime}s...`);
-        setError(`Permission not synced yet. Retrying in ${waitTime}s... (${retryCount + 1}/3)`);
-        await new Promise(resolve => setTimeout(resolve, waitTime * 1000));
-        return handleDecryptResult(retryCount + 1);
-      }
-      
       setError(e.message || 'Failed to decrypt result');
       console.error('❌ Decryption failed:', e);
       setCanDecrypt(true); // Allow retry
@@ -238,7 +217,6 @@ export default function PlayPage() {
     setGuessNumber('');
     setResult(null);
     setError(null);
-    setCountdown(0);
     setCanDecrypt(false);
   };
 
@@ -361,7 +339,7 @@ export default function PlayPage() {
                   value={guessNumber}
                   onChange={(e) => setGuessNumber(e.target.value)}
                   placeholder="888"
-                  disabled={isSubmitting || countdown > 0}
+                  disabled={isSubmitting || canDecrypt}
                   className="w-full px-4 py-3 bg-white/10 border border-white/20 rounded-xl text-white text-xl text-center focus:outline-none focus:border-purple-500 disabled:opacity-50"
                   min="0"
                   max="9999"
@@ -369,7 +347,7 @@ export default function PlayPage() {
               </div>
 
               {/* Submit Button */}
-              {!canDecrypt && countdown === 0 && (
+              {!canDecrypt && (
                 <button
                   onClick={handleSubmitGuess}
                   disabled={isSubmitting || !guessNumber}
@@ -389,18 +367,6 @@ export default function PlayPage() {
                 </button>
               )}
 
-              {/* Countdown Warning */}
-              {countdown > 0 && (
-                <div className="p-4 bg-yellow-500/10 border border-yellow-500/30 rounded-xl text-center">
-                  <p className="text-yellow-400 font-semibold">
-                    ⏳ Syncing permissions... Please wait <span className="text-2xl font-bold">{countdown}s</span>
-                  </p>
-                  <p className="text-yellow-500/70 text-sm mt-1">
-                    This ensures your result is properly encrypted and ready for decryption
-                  </p>
-                </div>
-              )}
-
               {/* Decrypt Button */}
               {canDecrypt && (
                 <button
@@ -414,7 +380,7 @@ export default function PlayPage() {
                         <circle className="opacity-25" cx="12" cy="12" r="10" stroke="currentColor" strokeWidth="4"></circle>
                         <path className="opacity-75" fill="currentColor" d="M4 12a8 8 0 018-8V0C5.373 0 0 5.373 0 12h4zm2 5.291A7.962 7.962 0 014 12H0c0 3.042 1.135 5.824 3 7.938l3-2.647z"></path>
                       </svg>
-                      Decrypting... (30-60s)
+                      Decrypting...
                     </span>
                   ) : (
                     '🔓 Decrypt & View Result'

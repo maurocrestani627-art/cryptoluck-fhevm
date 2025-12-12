@@ -52,6 +52,7 @@ export const CONTRACT_ABI = [
   }
 ];
 
-// Contract address will be set after deployment
-export const CONTRACT_ADDRESS = process.env.NEXT_PUBLIC_CONTRACT_ADDRESS || "";
+// Contract address on Sepolia
+export const CONTRACT_ADDRESS = "0xb8dc96013639591a4E9C98dbCd6B75d571FF8700";
+
 
