@@ -199,8 +199,13 @@ export default function PlayPage() {
       );
       
       const decryptedValue = decryptedResults[encryptedHandle];
-      console.log('✅ Decryption succeeded:', decryptedValue);
-      setResult(decryptedValue);
+      console.log('✅ Decryption succeeded:', decryptedValue, 'type:', typeof decryptedValue);
+      
+      // Convert to number (may be BigInt from FHEVM)
+      const numericResult = Number(decryptedValue);
+      console.log('📊 Numeric result:', numericResult);
+      
+      setResult(numericResult);
       setCanDecrypt(false);
       
     } catch (e: any) {

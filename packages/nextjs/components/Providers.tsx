@@ -9,7 +9,7 @@ import { QueryClientProvider, QueryClient } from '@tanstack/react-query';
 // RainbowKit configuration
 const config = getDefaultConfig({
   appName: 'CryptoLuck - Provably Fair Lottery',
-  projectId: 'e57ede6d6def4a7ab3dc30bf01f25cc8', // WalletConnect Project ID
+  projectId: 'YOUR_WALLETCONNECT_PROJECT_ID', // Replace with actual project ID
   chains: [sepolia],
   ssr: false,
 });
